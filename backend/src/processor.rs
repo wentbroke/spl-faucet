@@ -39,7 +39,7 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
   if Ok(*cash_mint.key) != env!("STAMM_CASH").parse() {
     return Err(ProgramError::InvalidInstructionData)?;
   }
-  let limit_cash_ix = spl_token::instruction::set_authority(
+  let stop_minting_cash_ix = spl_token::instruction::set_authority(
     token_program.key,
     cash_mint.key,
     Some(&pda),
@@ -48,7 +48,19 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     &[&founder.key],
   )?;
   invoke(
-    &limit_cash_ix,
+    &stop_minting_cash_ix,
+    &[cash_mint.clone(), founder.clone(), token_program.clone()],
+  )?;
+  let stop_freezing_cash_ix = spl_token::instruction::set_authority(
+    token_program.key,
+    cash_mint.key,
+    None,
+    spl_token::instruction::AuthorityType::FreezeAccount,
+    founder.key,
+    &[&founder.key],
+  )?;
+  invoke(
+    &stop_freezing_cash_ix,
     &[cash_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 
@@ -56,7 +68,7 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
   if Ok(*bond_mint.key) != env!("STAMM_BOND").parse() {
     return Err(ProgramError::InvalidInstructionData)?;
   }
-  let limit_bond_ix = spl_token::instruction::set_authority(
+  let stop_minting_bond_ix = spl_token::instruction::set_authority(
     token_program.key,
     bond_mint.key,
     Some(&pda),
@@ -65,7 +77,19 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     &[&founder.key],
   )?;
   invoke(
-    &limit_bond_ix,
+    &stop_minting_bond_ix,
+    &[bond_mint.clone(), founder.clone(), token_program.clone()],
+  )?;
+  let stop_freezing_bond_ix = spl_token::instruction::set_authority(
+    token_program.key,
+    bond_mint.key,
+    None,
+    spl_token::instruction::AuthorityType::FreezeAccount,
+    founder.key,
+    &[&founder.key],
+  )?;
+  invoke(
+    &stop_freezing_bond_ix,
     &[bond_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 
@@ -73,7 +97,7 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
   if Ok(*share_mint.key) != env!("STAMM_SHARE").parse() {
     return Err(ProgramError::InvalidInstructionData)?;
   }
-  let limit_share_ix = spl_token::instruction::set_authority(
+  let stop_minting_share_ix = spl_token::instruction::set_authority(
     token_program.key,
     share_mint.key,
     Some(&pda),
@@ -82,7 +106,19 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     &[&founder.key],
   )?;
   invoke(
-    &limit_share_ix,
+    &stop_minting_share_ix,
+    &[share_mint.clone(), founder.clone(), token_program.clone()],
+  )?;
+  let stop_freezing_share_ix = spl_token::instruction::set_authority(
+    token_program.key,
+    share_mint.key,
+    Nonee,
+    spl_token::instruction::AuthorityType::FreezeAccount,
+    founder.key,
+    &[&founder.key],
+  )?;
+  invoke(
+    &stop_freezing_share_ix,
     &[share_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 

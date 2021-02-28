@@ -8,7 +8,9 @@ use solana_sdk::transaction::Transaction;
 use stamm_backend::instruction::Instruction as StammInstruction;
 use std::env;
 use std::fs::File;
+use std::io::stdin;
 use std::io::BufReader;
+use std::path::PathBuf;
 
 fn main() {
   let mut args = env::args();
@@ -22,9 +24,7 @@ fn main() {
 }
 
 fn keypair() -> Keypair {
-  let file = File::open("~/.config/solana/id.json").expect("~/.config/solana/id.json not found");
-  let reader = BufReader::new(file);
-  let bytes: Vec<u8> = serde_json::from_reader(reader).unwrap();
+  let bytes: Vec<u8> = serde_json::from_reader(stdin()).unwrap();
   Keypair::from_bytes(&bytes).expect("Malformed keypair")
 }
 
