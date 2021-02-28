@@ -2,9 +2,9 @@ use crate::prelude::*;
 use solana_program::{
   account_info::{next_account_info, AccountInfo},
   entrypoint::ProgramResult,
+  program::invoke,
   program_error::ProgramError,
   pubkey::Pubkey,
-  sysvar::{rent::Rent, Sysvar},
 };
 
 pub(crate) fn process(program_id: &Pubkey, accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
@@ -43,9 +43,13 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     token_program.key,
     cash_mint.key,
     Some(&pda),
-    spl_token::instruction::AuthorityType::AccountOwner,
+    spl_token::instruction::AuthorityType::MintTokens,
     founder.key,
     &[&founder.key],
+  )?;
+  invoke(
+    &limit_cash_ix,
+    &[cash_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 
   let bond_mint = next_account_info(accounts)?;
@@ -56,9 +60,13 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     token_program.key,
     bond_mint.key,
     Some(&pda),
-    spl_token::instruction::AuthorityType::AccountOwner,
+    spl_token::instruction::AuthorityType::MintTokens,
     founder.key,
     &[&founder.key],
+  )?;
+  invoke(
+    &limit_bond_ix,
+    &[bond_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 
   let share_mint = next_account_info(accounts)?;
@@ -69,9 +77,13 @@ fn genesis(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     token_program.key,
     share_mint.key,
     Some(&pda),
-    spl_token::instruction::AuthorityType::AccountOwner,
+    spl_token::instruction::AuthorityType::MintTokens,
     founder.key,
     &[&founder.key],
+  )?;
+  invoke(
+    &limit_share_ix,
+    &[share_mint.clone(), founder.clone(), token_program.clone()],
   )?;
 
   Ok(())
