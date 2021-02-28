@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub(crate) enum Instruction {
+pub enum Instruction {
   // [signer] founder
   // [] token program
   // [writable] cash mint address

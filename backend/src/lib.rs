@@ -1,8 +1,9 @@
-mod error;
-mod instruction;
+pub mod error;
+pub mod instruction;
 mod prelude;
 mod processor;
-mod state;
+pub mod state;
+
 use processor::process;
 use solana_program::entrypoint;
 

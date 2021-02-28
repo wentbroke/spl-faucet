@@ -5,12 +5,10 @@ use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Keypair;
 use solana_sdk::signature::Signer;
 use solana_sdk::transaction::Transaction;
+use stamm_backend::instruction::Instruction as StammInstruction;
 use std::env;
 use std::fs::File;
 use std::io::BufReader;
-
-mod instruction;
-use instruction::Instruction as StammInstruction;
 
 fn main() {
   let mut args = env::args();
