@@ -5,6 +5,8 @@ use thiserror::Error;
 pub(crate) enum Error {
   #[error("MalformedInstruction")]
   MalformedInstruction,
+  #[error("lamports overflow")]
+  LamportsOverflow,
 }
 
 impl From<Error> for ProgramError {
