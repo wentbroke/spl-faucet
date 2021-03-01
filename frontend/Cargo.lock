@@ -2901,6 +2901,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
 
 [[package]]
+name = "spl-faucet-backend"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "solana-program",
+ "spl-token",
+ "thiserror",
+]
+
+[[package]]
+name = "spl-faucet-frontend"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "serde_json",
+ "solana-client",
+ "solana-sdk",
+ "spl-faucet-backend",
+ "spl-token",
+]
+
+[[package]]
 name = "spl-memo"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2937,30 +2961,6 @@ name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
-
-[[package]]
-name = "stamm-backend"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "serde",
- "solana-program",
- "spl-token",
- "thiserror",
-]
-
-[[package]]
-name = "stamm-frontend"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "serde",
- "serde_json",
- "solana-client",
- "solana-sdk",
- "spl-token",
- "stamm-backend",
-]
 
 [[package]]
 name = "strsim"

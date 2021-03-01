@@ -6,7 +6,6 @@ use solana_program::sysvar::Sysvar;
 use solana_program::{
   account_info::{next_account_info, AccountInfo},
   entrypoint::ProgramResult,
-  msg,
   program::invoke,
   program_error::ProgramError,
   pubkey::Pubkey,
@@ -34,7 +33,7 @@ pub(crate) fn process(program_id: &Pubkey, accounts: &[AccountInfo], instruction
 }
 
 fn start_airdrop(program_id: &Pubkey, accounts: &[AccountInfo], amount: u64) -> ProgramResult {
-  let (pda, _bump_seed) = Pubkey::find_program_address(&[b"stamm"], program_id);
+  let (pda, _bump_seed) = Pubkey::find_program_address(&[b"spl-token-faucet"], program_id);
   let accounts = &mut accounts.iter();
 
   let wealthy = next_account_info(accounts)?;
@@ -78,7 +77,7 @@ fn start_airdrop(program_id: &Pubkey, accounts: &[AccountInfo], amount: u64) -> 
 }
 
 fn finish_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
-  let (pda, bump_seed) = Pubkey::find_program_address(&[b"stamm"], program_id);
+  let (pda, bump_seed) = Pubkey::find_program_address(&[b"spl-token-faucet"], program_id);
   let accounts = &mut accounts.iter();
 
   let wealthy = next_account_info(accounts)?;
@@ -112,7 +111,7 @@ fn finish_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResul
       receiver.clone(),
       token_program.clone(),
     ],
-    &[&[&b"stamm"[..], &[bump_seed]]],
+    &[&[&b"spl-token-faucet"[..], &[bump_seed]]],
   )?;
 
   let ix =
@@ -125,7 +124,7 @@ fn finish_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResul
       receiver.clone(),
       token_program.clone(),
     ],
-    &[&[&b"stamm"[..], &[bump_seed]]],
+    &[&[&b"spl-token-faucet"[..], &[bump_seed]]],
   )?;
 
   **wealthy.lamports.borrow_mut() = wealthy
@@ -138,7 +137,7 @@ fn finish_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResul
 }
 
 fn take_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
-  let (pda, bump_seed) = Pubkey::find_program_address(&[b"stamm"], program_id);
+  let (pda, bump_seed) = Pubkey::find_program_address(&[b"spl-token-faucet"], program_id);
   let accounts = &mut accounts.iter();
 
   let _ = next_account_info(accounts)?;
@@ -165,7 +164,7 @@ fn take_airdrop(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult 
       receiver.clone(),
       token_program.clone(),
     ],
-    &[&[&b"stamm"[..], &[bump_seed]]],
+    &[&[&b"spl-token-faucet"[..], &[bump_seed]]],
   )?;
 
   Ok(())

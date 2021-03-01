@@ -8,9 +8,9 @@ use solana_sdk::signature::Signer;
 use solana_sdk::system_instruction;
 use solana_sdk::sysvar::rent;
 use solana_sdk::transaction::Transaction;
+use spl_faucet_backend::instruction::Instruction as FaucetInstruction;
+use spl_faucet_backend::state::Airdrop;
 use spl_token::state::Account;
-use stamm_backend::instruction::Instruction as StammInstruction;
-use stamm_backend::state::Airdrop;
 use std::env;
 use std::io::stdin;
 use std::mem::size_of;
@@ -21,12 +21,12 @@ fn main() {
   let subcommand = args.next().expect("Give me a subcommand");
 
   match subcommand.as_ref() {
-    "start" => start_airdrop(
+    "open" => start_airdrop(
       &args.next().expect("Give me a token account"),
       &args.next().expect("Give me an amount to deposit"),
       &args.next().expect("Tell me how much token we can take each time"),
     ),
-    "finish" => finish_airdrop(
+    "close" => finish_airdrop(
       &args.next().expect("Give me an airdrop account"),
       &args.next().expect("Give me an account to receive token"),
     ),
@@ -44,10 +44,10 @@ fn keypair() -> Keypair {
 }
 
 fn program() -> Pubkey {
-  env::var("STAMM_PROGRAM")
-    .expect("$STAMM_PROGRAM not set")
+  env::var("SPL_FAUCET_PROGRAM_ID")
+    .expect("$SPL_FAUCET_PROGRAM_ID not set")
     .parse()
-    .expect("$STAMM_PROGRAM malformed")
+    .expect("$SPL_FAUCET_PROGRAM_ID malformed")
 }
 
 fn start_airdrop(maker: &str, deposit_amount: &str, take_amount: &str) {
@@ -55,7 +55,7 @@ fn start_airdrop(maker: &str, deposit_amount: &str, take_amount: &str) {
   let deposit_amount: u64 = deposit_amount.parse().expect("Give me a number");
   let take_amount: u64 = take_amount.parse().expect("Give me a number");
 
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let mint: Pubkey = conn.get_token_account(&maker).unwrap().unwrap().mint.parse().unwrap();
 
   let key = keypair();
@@ -100,11 +100,11 @@ fn start_airdrop(maker: &str, deposit_amount: &str, take_amount: &str) {
   ];
   let start_airdrop_ix = Instruction::new(
     program(),
-    &StammInstruction::StartAirdrop { amount: take_amount },
+    &FaucetInstruction::StartAirdrop { amount: take_amount },
     accounts,
   );
 
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let (hash, _) = conn.get_recent_blockhash().unwrap();
   let tx = Transaction::new_signed_with_payer(
     &[
@@ -126,7 +126,7 @@ fn start_airdrop(maker: &str, deposit_amount: &str, take_amount: &str) {
 fn finish_airdrop(airdrop: &str, receiver: &str) {
   let airdrop: Pubkey = airdrop.parse().expect("Malformed public key");
   let receiver: Pubkey = receiver.parse().expect("Malformed public key");
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let airdrop_bytes = conn.get_account_data(&airdrop).unwrap();
   let airdrop_data = Airdrop::unpack(&airdrop_bytes).unwrap();
   let deposit_owner = conn
@@ -146,9 +146,9 @@ fn finish_airdrop(airdrop: &str, receiver: &str) {
     AccountMeta::new(receiver, false),
     AccountMeta::new(airdrop, false),
   ];
-  let finish_airdrop_ix = Instruction::new(program(), &StammInstruction::FinishAirdrop, accounts);
+  let finish_airdrop_ix = Instruction::new(program(), &FaucetInstruction::FinishAirdrop, accounts);
 
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let (hash, _) = conn.get_recent_blockhash().unwrap();
   let tx = Transaction::new_signed_with_payer(&[finish_airdrop_ix], Some(&key.pubkey()), &[&key], hash);
   conn.send_and_confirm_transaction(&tx).unwrap();
@@ -157,7 +157,7 @@ fn finish_airdrop(airdrop: &str, receiver: &str) {
 fn take_airdrop(airdrop: &str, taker: &str) {
   let taker: Pubkey = taker.parse().expect("Malformed public key");
   let airdrop: Pubkey = airdrop.parse().expect("Malformed public key");
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let airdrop_bytes = conn.get_account_data(&airdrop).unwrap();
   let airdrop_data = Airdrop::unpack(&airdrop_bytes).unwrap();
   let deposit_owner = conn
@@ -177,9 +177,9 @@ fn take_airdrop(airdrop: &str, taker: &str) {
     AccountMeta::new(airdrop, false),
     AccountMeta::new(taker, false),
   ];
-  let take_airdrop_ix = Instruction::new(program(), &StammInstruction::TakeAirdrop, accounts);
+  let take_airdrop_ix = Instruction::new(program(), &FaucetInstruction::TakeAirdrop, accounts);
 
-  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let conn = RpcClient::new(env::var("SPL_FAUCET_RPC").expect("You must set $SPL_FAUCET_RPC"));
   let (hash, _) = conn.get_recent_blockhash().unwrap();
   let tx = Transaction::new_signed_with_payer(&[take_airdrop_ix], Some(&key.pubkey()), &[&key], hash);
   conn.send_and_confirm_transaction(&tx).unwrap();

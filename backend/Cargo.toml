@@ -1,5 +1,5 @@
 [package]
-name = "stamm-backend"
+name = "spl-faucet-backend"
 version = "0.1.0"
 authors = ["wentbroke <78487042+wentbroke@users.noreply.github.com>"]
 edition = "2018"
