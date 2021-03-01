@@ -42,12 +42,12 @@ fn program() -> Pubkey {
     .expect("$STAMM_PROGRAM malformed")
 }
 
-fn start_airdrop(account: &str, amount: &str) {
-  let account: Pubkey = account.parse().expect("Malformed public key");
+fn start_airdrop(maker: &str, amount: &str) {
+  let maker: Pubkey = maker.parse().expect("Malformed public key");
   let amount: u64 = amount.parse().expect("Give me a number");
 
   let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
-  let mint: Pubkey = conn.get_token_account(&account).unwrap().unwrap().mint.parse().unwrap();
+  let mint: Pubkey = conn.get_token_account(&maker).unwrap().unwrap().mint.parse().unwrap();
 
   let key = keypair();
   let deposit = Keypair::new();
@@ -98,5 +98,42 @@ fn start_airdrop(account: &str, amount: &str) {
     &[&key],
     hash,
   );
+  conn.send_and_confirm_transaction(&tx).unwrap();
+}
+
+fn finish_airdrop(airdrop: &str) {
+  let airdrop: Pubkey = airdrop.parse().expect("Malformed public key");
+  let key = keypair();
+
+  let accounts = vec![
+    AccountMeta::new_readonly(key.pubkey(), true),
+    AccountMeta::new_readonly(spl_token::id(), false),
+    AccountMeta::new(deposit.pubkey(), false),
+    AccountMeta::new(airdrop.pubkey(), false),
+  ];
+  let finish_airdrop_ix = Instruction::new(program(), &StammInstruction::FinishAirdrop, accounts);
+
+  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let (hash, _) = conn.get_recent_blockhash().unwrap();
+  let tx = Transaction::new_signed_with_payer(&[finish_airdrop_ix], Some(&key.pubkey()), &[&key], hash);
+  conn.send_and_confirm_transaction(&tx).unwrap();
+}
+
+fn take_airdrop(taker: &str, deposit: &str, amount: &str) {
+  let taker: Pubkey = taker.parse().expect("Malformed public key");
+  let deposit: Pubkey = deposit.parse().expect("Malformed public key");
+  let amount: u64 = amount.parse().expect("Give me a number");
+  let key = keypair();
+
+  let accounts = vec![
+    AccountMeta::new_readonly(spl_token::id(), false),
+    AccountMeta::new(deposit.pubkey(), false),
+    AccountMeta::new(taker.pubkey(), false),
+  ];
+  let take_airdrop_ix = Instruction::new(program(), &StammInstruction::TakeAirdrop { amount }, accounts);
+
+  let conn = RpcClient::new("http://127.0.0.1:8899".to_string());
+  let (hash, _) = conn.get_recent_blockhash().unwrap();
+  let tx = Transaction::new_signed_with_payer(&[take_airdrop_ix], Some(&key.pubkey()), &[&key], hash);
   conn.send_and_confirm_transaction(&tx).unwrap();
 }
