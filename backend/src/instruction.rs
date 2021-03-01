@@ -7,16 +7,21 @@ pub enum Instruction {
   // [] rent sysvar
   // [writable] token deposit address
   // [writable] data account
-  StartAirdrop,
+  StartAirdrop { amount: u64 },
 
   // [signer] token holder
   // [] token program
+  // [] owner of token deposit address
   // [writable] token deposit address
+  // [writable] receiver address
   // [writable] data account
   FinishAirdrop,
 
+  // [signer] taker sol address
   // [] token program
+  // [] owner of token deposit address
   // [writable] token deposit address
-  // [writable] taker address
-  TakeAirdrop { amount: u64 },
+  // [writable] data account
+  // [writable] taker token address
+  TakeAirdrop,
 }

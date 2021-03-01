@@ -8,6 +8,7 @@ pub struct Airdrop {
   pub is_initialized: bool,
   pub deposit: Pubkey,
   pub withdrawal: Pubkey,
+  pub amount: u64,
 }
 
 impl Sealed for Airdrop {}
