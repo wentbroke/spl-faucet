@@ -6,7 +6,7 @@ With SPL Token Faucet, developers are now able to try DeFi products on Solana te
 ## Usage
 ```
 export SPL_FAUCET_RPC=https://devnet.solana.com
-export SPL_FAUCET_PROGRAM_ID=8uZDZjPjrBzPgK1KuE9EMgPWARMeKmSAHCLzsqZPqvJP
+export SPL_FAUCET_PROGRAM_ID=BiXcrzmpiCuesk4mPhNQLKEKux3qCoUrEgsNgLD8hk3k
 ```
 
 ### Open a faucet
