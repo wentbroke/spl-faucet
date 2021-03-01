@@ -1,6 +1,8 @@
 # SPL Token Faucet
 With SPL Token Faucet, developers are now able to try DeFi products on Solana testnet much easier.
 
+[Currently running on devnet.](https://explorer.solana.com/address/BiXcrzmpiCuesk4mPhNQLKEKux3qCoUrEgsNgLD8hk3k?cluster=devnet)
+
 ## Usage
 ```
 export SPL_FAUCET_RPC=https://devnet.solana.com

@@ -1,5 +1,5 @@
 # SPL Token Faucet
-With SPL Token Faucet, developers are now able to try DeFi products on Solana testnet much easier
+With SPL Token Faucet, developers are now able to try DeFi products on Solana testnet much easier.
 
 ---
 
@@ -25,8 +25,12 @@ This command will close the faucet you opened, and sends you back its funds.
 ---
 
 # Conclusion
-Developing smart contrats with Rust was much fun experience than Solidity
+SPL Token Faucet is currently running on devnet.
+https://explorer.solana.com/address/BiXcrzmpiCuesk4mPhNQLKEKux3qCoUrEgsNgLD8hk3k?cluster=devnet
+
+
+Developing smart contracts with Rust was much fun experience than Solidity :)
 
 ---
 
-# $SOL to the moon
+# $SOL to the MOON :rocket: :rocket:
